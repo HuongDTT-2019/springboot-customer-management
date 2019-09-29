@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Employee</title>
+</head>
+<body>
+<div id="wrapper">
+    <h3>Edit Customer</h3>
+    <p>
+        <a th:href="@{/list}"><< Back to list</a>
+    </p>
+
+    <th:block th:if="${message}">
+        <p th:text="${message}"></p>
+    </th:block>
+
+    <div id="content">
+        <div id="form">
+            <form  th:action="@{/edit}" th:object="${customerForm}"
+                   method="POST" novalidate="novalidate" enctype="multipart/form-data">
+                <input th:type="hidden" name="id" th:field="*{id}">
+                <table>
+                    <tr>
+                        <td></td>
+                        <td><img with="100px" height="100px" th:src="@{'../../images/'+${customer.get().getAvatar()}}" alt="avatar-customer"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Name</label></td>
+                        <td><input type="text" th:field="*{name}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Images</label></td>
+                        <td><input type="file" th:field="*{avatar}"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Save"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<footer></footer>
+</body>
+</html>

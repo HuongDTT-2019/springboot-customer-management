@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List-Customer</title>
+</head>
+<body>
+<h2>List-Customer</h2>
+<table border="1">
+<tr>
+    <th>Name</th>
+    <th>Avatar</th>
+    <th>Edit</th>
+    <th>Delete</th>
+</tr>
+<th:block th:action="@{/list}" th:each="customers : ${customer}">
+    <tr>
+        <td th:text="${customers.name}"></td>
+        <td><img with="100px" height="100px" th:src="@{'../../images/'+${customers.avatar}}" ></td>
+        <td><a th:href="@{/edit/__${customers.id}__ }">Edit</a></td>
+        <td><a th:href="@{/delete/__${customers.id}__ }">Delete</a></td>
+    </tr>
+</th:block>
+</table>
+</body>
+</html>
