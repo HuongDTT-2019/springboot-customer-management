@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Optional;
 
 @Controller
@@ -63,33 +64,33 @@ public class CustomerController {
         return modelAndView;
     }
 
-//    @GetMapping(value = "edit/{id}")
-//    public ModelAndView showEditForm(@PathVariable("id") Long id) {
-//        Optional<Customer> customer = customerService.findById(id);
-//        if (customer.isPresent()) {
-//            CustomerForm customerForm = new CustomerForm(customer.get().getId(), customer.get().getName(), null);
-//            ModelAndView modelAndView = new ModelAndView("customer/edit");
-//            modelAndView.addObject("customerForm", customerForm);
-//            modelAndView.addObject("customer", customer);
-//            return modelAndView;
-//        }
-//        return new ModelAndView("error404");
-//
-//    }
-//
-//    @PostMapping(value = "edit")
-//    public ModelAndView editCustomer(@ModelAttribute("customerForm") CustomerForm customerForm, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            System.out.println("Result Error Occured" + bindingResult.getAllErrors());
-//        }
-//        Optional<Customer> customer = customerService.findById(customerForm.getId());
-//        customerService.edit(customerForm);
-//        ModelAndView modelAndView = new ModelAndView("customer/edit");
-//        modelAndView.addObject("customer", customer);
-//        modelAndView.addObject("message", "edit success");
-//        return modelAndView;
-//    }
-//
+    @GetMapping(value = "edit/{id}")
+    public ModelAndView showEditForm(@PathVariable("id") Long id) {
+        Optional<Customer> customer = customerService.findById(id);
+        if (customer.isPresent()) {
+            CustomerForm customerForm = new CustomerForm(customer.get().getId(), customer.get().getName(),null,customer.get().getProvince(),customer.get().getBirthDate());
+            ModelAndView modelAndView = new ModelAndView("customer/edit");
+            modelAndView.addObject("customerForm", customerForm);
+            modelAndView.addObject("customer", customer);
+            return modelAndView;
+        }
+        return new ModelAndView("error404");
+
+    }
+
+    @PostMapping(value = "edit")
+    public ModelAndView editCustomer(@ModelAttribute("customerForm") CustomerForm customerForm, BindingResult bindingResult) throws IOException {
+        if (bindingResult.hasErrors()) {
+            System.out.println("Result Error Occured" + bindingResult.getAllErrors());
+        }
+        Optional<Customer> customer = customerService.findById(customerForm.getId());
+        customerService.edit(customerForm);
+        ModelAndView modelAndView = new ModelAndView("customer/edit");
+        modelAndView.addObject("customer", customer);
+        modelAndView.addObject("message", "edit success");
+        return modelAndView;
+    }
+
     @GetMapping(value = "delete/{id}")
     public ModelAndView showDeleteForm(@PathVariable("id") Long id){
         Optional<Customer> customer = customerService.findById(id);
@@ -101,7 +102,7 @@ public class CustomerController {
         return new ModelAndView("error404");
     }
     @PostMapping(value = "delete")
-    public String deleteCustomer(@ModelAttribute("customer") Customer customer){
+    public String deleteCustomer(@ModelAttribute("customer") Customer customer) throws IOException {
         customerService.remove(customer.getId());
         return "redirect:list";
     }

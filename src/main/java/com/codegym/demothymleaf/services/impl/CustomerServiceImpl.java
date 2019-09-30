@@ -29,12 +29,12 @@ import static org.springframework.util.ResourceUtils.*;
 @PropertySource("classpath:application.properties")
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
-
+    private FileServiceImpl fileService;
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository,FileServiceImpl fileService) {
         this.customerRepository = customerRepository;
+        this.fileService = fileService;
     }
-
     @Value(value = "${file-upload}")
     private String name;
 
@@ -51,17 +51,13 @@ public class CustomerServiceImpl implements CustomerService {
         String fileUpload = name;
 
         // luu file len server
-        try {
-            FileCopyUtils.copy(customerForm.getAvatar().getBytes(), new File(fileUpload + fileName));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        fileService.addFile(customerForm);
         Customer customer = new Customer(customerForm.getId(), customerForm.getName(), customerForm.getBirthDate(), fileName, customerForm.getProvince());
         customerRepository.save(customer);
     }
 
     @Override
-    public void edit(CustomerForm customerForm) {
+    public void edit(CustomerForm customerForm) throws IOException {
         Optional<Customer> customer = customerRepository.findById(customerForm.getId());
         MultipartFile multipartFile = customerForm.getAvatar();
         String fileName = multipartFile.getOriginalFilename();
@@ -69,16 +65,10 @@ public class CustomerServiceImpl implements CustomerService {
             Customer customerEdit = new Customer(customerForm.getId(), customerForm.getName(), customerForm.getBirthDate(), customer.get().getAvatar(), customerForm.getProvince());
             customerRepository.save(customerEdit);
         } else {
+            fileService.deleteFile(fileService.callFile(customer));
             Customer customerEdit = new Customer(customerForm.getId(), customerForm.getName(), customerForm.getBirthDate(), fileName, customerForm.getProvince());
             customerRepository.save(customerEdit);
-            String fileUpload = name;
-
-            // luu file len server
-            try {
-                FileCopyUtils.copy(customerForm.getAvatar().getBytes(), new File(fileUpload + fileName));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            fileService.addFile(customerForm);
         }
     }
 
@@ -88,18 +78,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void remove(Long id) {
+    public void remove(Long id) throws IOException {
         Optional<Customer> customer = customerRepository.findById(id);
-
-        String pathFile = name+customer.get().getAvatar();
-        try {
-            File avatar = getFile(pathFile);
-            FileUtils.forceDelete(avatar);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        fileService.deleteFile(fileService.callFile(customer));
         customerRepository.deleteById(id);
     }
 }
