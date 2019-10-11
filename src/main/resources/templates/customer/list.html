@@ -16,7 +16,7 @@
 <th:block th:action="@{/list}" th:each="customers : ${customer}">
     <tr>
         <td th:text="${customers.name}"></td>
-        <td><img with="100px" height="100px" th:src="@{'../../images/'+${customers.avatar}}" ></td>
+        <td><img with="100px" height="100px" th:src="@{'../../../images/'+${customers.avatar}}" ></td>
         <td><a th:href="@{/edit/__${customers.id}__ }">Edit</a></td>
         <td><a th:href="@{/delete/__${customers.id}__ }">Delete</a></td>
     </tr>

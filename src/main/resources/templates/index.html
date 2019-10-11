@@ -24,7 +24,6 @@
         <tr>
             <td>Avatar</td>
             <td><input type="file" th:field="*{avatar}"></td>
-            <td th:if="${#fields.hasErrors('avatar') }" th:errors="*{avatar}">Name Error</td>
         </tr>
         <tr>
             <td>Province:</td>
@@ -39,6 +38,7 @@
             <td><input type="submit" value="Create"></td>
         </tr>
     </table>
+    <h3 th:text="${'View page: ' + counterAccess.getCount()}"></h3>
 </form>
 </body>
 </html>

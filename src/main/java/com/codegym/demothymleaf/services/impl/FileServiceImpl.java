@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.springframework.util.ResourceUtils.getFile;
@@ -24,17 +25,15 @@ public class FileServiceImpl implements FileService {
     private String name;
     @Override
     public void addFile(CustomerForm customerForm) {
-        MultipartFile multipartFile1 =customerForm.getAvatar();
-        String fileName = multipartFile1.getOriginalFilename();
         String fileUpload = name;
-        // luu file len server
-        try {
-            FileCopyUtils.copy(customerForm.getAvatar().getBytes(), new File(fileUpload + fileName));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
+        MultipartFile  multipartFile =customerForm.getAvatar();
+        String fileName = multipartFile.getOriginalFilename();
+                try {
+                    FileCopyUtils.copy(multipartFile.getBytes(), new File(fileUpload + fileName));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
     @Override
     public File callFile(Optional<Customer> customer) throws FileNotFoundException {
         String pathFile = name + customer.get().getAvatar();

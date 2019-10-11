@@ -13,5 +13,6 @@ public interface CustomerService {
     void edit(CustomerForm customerForm) throws IOException;
     Optional<Customer> findById(Long id);
     void remove(Long id) throws IOException;
+    Iterable<Customer> findCustomerByName(String name);
 
 }

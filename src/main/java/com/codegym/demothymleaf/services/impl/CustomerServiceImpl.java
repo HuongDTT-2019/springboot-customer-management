@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -46,11 +47,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void save(CustomerForm customerForm) {
 
-        MultipartFile multipartFile = customerForm.getAvatar();
-        String fileName = multipartFile.getOriginalFilename();
         String fileUpload = name;
-
-        // luu file len server
+        MultipartFile multipartFile =customerForm.getAvatar();
+        String fileName = multipartFile.getOriginalFilename();
         fileService.addFile(customerForm);
         Customer customer = new Customer(customerForm.getId(), customerForm.getName(), customerForm.getBirthDate(), fileName, customerForm.getProvince());
         customerRepository.save(customer);
@@ -82,5 +81,10 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Customer> customer = customerRepository.findById(id);
         fileService.deleteFile(fileService.callFile(customer));
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public Iterable<Customer> findCustomerByName(String name) {
+        return customerRepository.findCustomerByName(name);
     }
 }

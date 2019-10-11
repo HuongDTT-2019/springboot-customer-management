@@ -1,5 +1,6 @@
 package com.codegym.demothymleaf.controller;
 
+import com.codegym.demothymleaf.model.CounterAccess;
 import com.codegym.demothymleaf.model.Customer;
 import com.codegym.demothymleaf.model.CustomerForm;
 import com.codegym.demothymleaf.model.Province;
@@ -10,10 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,6 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Controller
+@SessionAttributes("counterAccess")
 public class CustomerController {
 
     private CustomerService customerService;
@@ -32,6 +31,10 @@ public class CustomerController {
         this.provinceService = provinceService;
         this.customerService = customerService;
     }
+    @ModelAttribute("counterAccess")
+    public CounterAccess setUpCounter() {
+        return new CounterAccess();
+    }
 
     @ModelAttribute("provinces")
     public Iterable<Province> listProvince() {
@@ -39,7 +42,8 @@ public class CustomerController {
     }
 
     @GetMapping(value = "create")
-    public String addCustomer(Model model) {
+    public String addCustomer(@ModelAttribute("counterAccess") CounterAccess counterAccess, Model model) {
+        counterAccess.increment();
         model.addAttribute("customer", new CustomerForm());
         return "index";
     }
@@ -106,4 +110,12 @@ public class CustomerController {
         customerService.remove(customer.getId());
         return "redirect:list";
     }
+    @RequestMapping(value = "search")
+    public ModelAndView searchNameCustomer(@RequestParam("name") String name){
+        Iterable<Customer> customersFind = customerService.findCustomerByName(name);
+        ModelAndView modelAndView = new ModelAndView("customer/searchName");
+        modelAndView.addObject("customer",customersFind);
+        return modelAndView;
+    }
+
 }
